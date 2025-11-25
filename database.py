@@ -1,5 +1,6 @@
 import psycopg2
 import psycopg2.extras
+import os
 
 DB_CONFIG = {
     "dbname": "tadatodo",
@@ -10,27 +11,12 @@ DB_CONFIG = {
 }
 
 
+
 def get_db():
-    conn = psycopg2.connect(**DB_CONFIG)
-    return conn
-
-def init_db():
-    conn = get_db()
-    cursor = conn.cursor()
-
-    cursor.execute("""
-       CREATE TABLE IF NOT EXISTS tasks (
-            id SERIAL PRIMARY KEY,
-            title TEXT NOT NULL,
-            is_complete BOOLEAN DEFAULT FALSE
-            );                      
-    """)
-
-    conn.commit()
-    cursor.close()
-    conn.close()
-
-if __name__ == "__main__":
-    init_db()
-    print("Database initialised!")
-
+    return psycopg2.connect(
+        host=os.getenv("DB_HOST"),
+        database=os.getenv("DB_NAME"),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASS"),
+        port=os.getenv("DB_PORT")
+    )
